@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.TeaApplicationMapper">
+
+    <sql id="Base_Column_List">
+        id,semester_name,teacher_id,name,type,class_name,number,start,end,day_of_week,section,status
+    </sql>
+
+    <select id="selectAll" resultType="com.example.entity.TeaApplication">
+        select tea_apply.*, teacher.name as teacherName
+        from tea_apply
+        left join teacher on tea_apply.teacher_id = teacher.id
+        <where>
+            <if test="id != null"> and id= #{id}</if>
+            <if test="status != null"> and tea_apply.status = #{status}</if>
+            <if test="teacherId != null"> and tea_apply.teacher_id= #{teacherId}</if>
+            <if test="className != null"> and tea_apply.class_name= #{className}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.TeaApplication">
+        select
+        <include refid="Base_Column_List" />
+        from tea_apply
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from tea_apply
+        where  id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.TeaApplication" useGeneratedKeys="true">
+        insert into tea_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="item" separator=",">
+                <if test="item != null">
+                    ${item.fieldName}
+                </if>
+            </foreach>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="item" separator=",">
+                <if test="item != null">
+                    #{item.fieldName}
+                </if>
+            </foreach>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.TeaApplication">
+        update tea_apply
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="className!= null">
+                class_name = #{className},
+            </if>
+            <if test="number != null">
+                number = #{number},
+            </if>
+            <if test="section != null">
+                section = #{section},
+            </if>
+            <if test="start != null">
+                start = #{start},
+            </if>
+            <if test="end != null">
+                end = #{end},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="dayOfWeek != null">
+                day_of_week = #{dayOfWeek}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

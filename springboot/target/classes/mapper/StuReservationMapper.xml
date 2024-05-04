@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.StuReservationMapper">
+
+    <sql id="Base_Column_List">
+        id,semester_name,stu_id,lab_id,week,section,date,reason,status
+    </sql>
+
+    <select id="selectAll" resultType="com.example.entity.StuReservation">
+        select stu_reserve.*, lab.no as labNo, student.name as studentName
+        from stu_reserve
+        left join lab on stu_reserve.lab_id = lab.id
+        left join student on stu_reserve.stu_id = student.id
+        <where>
+            <if test="id != null"> and id= #{id}</if>
+            <if test="status != null"> and stu_reserve.status = #{status}</if>
+            <if test="studentId != null"> and stu_reserve.student_id= #{studentId}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.StuReservation">
+        select
+        <include refid="Base_Column_List" />
+        from stu_reserve
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from stu_reserve
+        where  id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.StuReservation" useGeneratedKeys="true">
+        insert into stu_reserve
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="semesterName != null">semester_name,</if>
+            <if test="labId != null">lab_id,</if>
+            <if test="studentId != null">stu_id,</if>
+            <if test="week != null">week,</if>
+            <if test="section != null">section,</if>
+            <if test="reason != null">reason,</if>
+            <if test="date != null">date,</if>
+            <if test="status != null">status</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="semesterName != null">#{semesterName},</if>
+            <if test="labId != null">#{labId},</if>
+            <if test="studentId != null">#{studentId},</if>
+            <if test="week != null">#{week},</if>
+            <if test="section != null">#{section},</if>
+            <if test="reason != null">#{reason},</if>
+            <if test="date != null">#{date},</if>
+            <if test="status != null">#{status}</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.StuReservation">
+        update stu_reserve
+        <set>
+            <if test="labId != null">
+                lab_id = #{labId},
+            </if>
+            <if test="studentId != null">
+                stu_id = #{studentId},
+            </if>
+            <if test="week != null">
+                week = #{week},
+            </if>
+            <if test="reason != null">
+                reason = #{reason},
+            </if>
+            <if test="section != null">
+                section = #{section},
+            </if>
+            <if test="date != null">
+                date = #{date},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

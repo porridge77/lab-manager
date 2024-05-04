@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.LabMapper">
+
+    <sql id="Base_Column_List">
+        id,no,name,type,equipment_num,status,admin_id
+    </sql>
+
+    <select id="selectAll" resultType="com.example.entity.Lab">
+        select lab.*, lab_admin.name as adminName
+        from lab
+        left join lab_admin on lab.admin_id = lab_admin.id
+        <where>
+            <if test="id != null"> and id= #{id}</if>
+            <if test="type != null"> and type= #{type}</if>
+            <if test="name != null"> and lab.name like concat('%', #{name}, '%')</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.Lab">
+        select
+        <include refid="Base_Column_List" />
+        from lab
+        where id = #{id}
+    </select>
+
+
+    <delete id="deleteById">
+        delete from lab
+        where  id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Lab" useGeneratedKeys="true">
+        insert into lab
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="no != null">no,</if>
+            <if test="name != null">name,</if>
+            <if test="type != null">type,</if>
+            <if test="equipmentNum != null">equipment_num,</if>
+            <if test="adminId != null">admin_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="no != null">#{no},</if>
+            <if test="name != null">#{name},</if>
+            <if test="type != null">#{type},</if>
+            <if test="equipmentNum != null">#{equipmentNum},</if>
+            <if test="adminId != null">#{adminId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Lab">
+        update lab
+        <set>
+            <if test="no != null">
+                no = #{no},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="equipmentNum != null">
+                equipment_num = #{equipmentNum},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="adminId != null">
+                admin_id = #{adminId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>
