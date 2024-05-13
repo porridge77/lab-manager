@@ -78,9 +78,15 @@ export default {
       form: {},
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       rules: {
+        account: [
+          {required: true, message: '请输入账户', trigger: 'blur'},
+        ],
+        password: [
+          {required: true, message: '请输入密码', trigger: 'blur'},
+        ],
         name: [
           {required: true, message: '请输入姓名', trigger: 'blur'},
-        ]
+        ],
       },
       ids: []
     }

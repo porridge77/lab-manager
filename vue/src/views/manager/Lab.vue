@@ -52,7 +52,7 @@
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item prop="type" label="类型">
-          <el-select v-model="form.type" placeholder="请选择实验室类型">
+          <el-select v-model="form.type" placeholder="请选择实验室类型" style="width: 385px;">
             <el-option label="硬件" value="硬件"></el-option>
             <el-option label="软件" value="软件"></el-option>
             <el-option label="网络" value="网络"></el-option>
@@ -91,11 +91,20 @@ export default {
       form: {},
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       rules: {
+        no: [
+          {required: true, message: '请输入编号', trigger: 'blur'},
+        ],
         name: [
           {required: true, message: '请输入名称', trigger: 'blur'},
         ],
+        equipmentNum: [
+          {required: true, message: '请输入设备数', trigger: 'blur'},
+        ],
+        type: [
+          { required: true, message: '请选择实验室类型', trigger: 'change' }
+        ],
         labAdminId: [
-          {required: true, message: '请选择实验室管理员', trigger: 'blur'},
+          {required: true, message: '请选择实验室管理员', trigger: 'change'},
         ]
       },
       ids: [],

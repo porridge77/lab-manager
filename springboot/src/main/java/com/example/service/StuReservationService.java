@@ -27,7 +27,6 @@ public class StuReservationService {
     private SemesterService semesterService;
 
     public void add(StuReservation reserve) {
-        reserve.setLabId(labMapper.getIdByNo(reserve.getLabNo()));
         reserve.setSemesterName(semesterService.getCurrentSemester());
         reserve.setDate(DateUtil.date());
         reserve.setStatus(ReserveEnum.EMP.status);

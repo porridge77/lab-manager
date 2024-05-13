@@ -56,7 +56,7 @@
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item prop="type" label="实验室类型">
-          <el-select v-model="form.type" placeholder="请选择">
+          <el-select v-model="form.type" placeholder="请选择" style="width:385px;">
             <el-option label="硬件" value="硬件"></el-option>
             <el-option label="软件" value="软件"></el-option>
             <el-option label="网络" value="网络"></el-option>
@@ -75,7 +75,7 @@
           <el-input v-model="form.end" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item prop="dayOfWeek" label="星期几">
-          <el-select v-model="form.dayOfWeek" placeholder="请选择">
+          <el-select v-model="form.dayOfWeek" placeholder="请选择" style="width:385px;">
             <el-option label="星期一" value="星期一"></el-option>
             <el-option label="星期二" value="星期二"></el-option>
             <el-option label="星期三" value="星期三"></el-option>
@@ -84,7 +84,14 @@
           </el-select>
         </el-form-item>
         <el-form-item prop="section" label="节次">
-          <el-input v-model="form.section" autocomplete="off"></el-input>
+          <el-select v-model="form.section" placeholder="请选择节次" style="width:385px;">
+            <el-option
+                v-for="item in sectionOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -107,12 +114,42 @@ export default {
       total: 0,
       status: null,
       fromVisible: false,
+      section:'',
       form: {},
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       rules: {
-
+        name: [
+          {required: true, message: '请输入课程名称', trigger: 'blur'},
+        ],
+        type: [
+          {required: true, message: '请选择类型', trigger: 'change'},
+        ],
+        className: [
+          {required: true, message: '请输入班级名称', trigger: 'blur'},
+        ],
+        number: [
+          {required: true, message: '请输入班级人数', trigger: 'blur'},
+        ],
+        start: [
+          {required: true, message: '请输入起始周', trigger: 'blur'},
+        ],
+        end: [
+          {required: true, message: '请输入结束周', trigger: 'blur'},
+        ],
+        dayOfWeek: [
+          {required: true, message: '请选择', trigger: 'change'},
+        ],
+        section: [
+          {required: true, message: '请选择节次', trigger: 'change'},
+        ],
       },
-      ids: []
+      ids: [],
+      sectionOptions: [
+        { value: '1-2', label: '1-2' },
+        { value: '3-4', label: '3-4' },
+        { value: '5-6', label: '5-6' },
+        { value: '7-8', label: '7-8' },
+      ],
     }
   },
   created() {

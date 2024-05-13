@@ -36,19 +36,32 @@
     <insert id="insert" parameterType="com.example.entity.TeaApplication" useGeneratedKeys="true">
         insert into tea_apply
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <foreach collection="list" item="item" separator=",">
-                <if test="item != null">
-                    ${item.fieldName}
-                </if>
-            </foreach>
+            <if test="id != null">id,</if>
+            <if test="semesterName != null">semester_name,</if>
+            <if test="teacherId != null">teacher_id,</if>
+            <if test="name != null">name,</if>
+            <if test="type != null">type,</if>
+            <if test="className != null">class_name,</if>
+            <if test="number != null">number,</if>
+            <if test="start != null">start,</if>
+            <if test="end != null">end,</if>
+            <if test="dayOfWeek != null">day_of_week,</if>
+            <if test="section != null">section,</if>
+            <if test="status != null">status</if>
         </trim>
-        values
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <foreach collection="list" item="item" separator=",">
-                <if test="item != null">
-                    #{item.fieldName}
-                </if>
-            </foreach>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="semesterName != null">#{semesterName},</if>
+            <if test="teacherId != null">#{teacherId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="type != null">#{type},</if>
+            <if test="className != null">#{className},</if>
+            <if test="number != null">#{number},</if>
+            <if test="start != null">#{start},</if>
+            <if test="end != null">#{end},</if>
+            <if test="dayOfWeek != null">#{dayOfWeek},</if>
+            <if test="section != null">#{section},</if>
+            <if test="status != null">#{status}</if>
         </trim>
     </insert>
 

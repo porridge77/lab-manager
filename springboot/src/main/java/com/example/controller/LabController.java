@@ -66,7 +66,7 @@ public class LabController {
     @GetMapping("/selectAll")
     public Result selectAll(Lab lab){
         List<Lab> list = labService.selectAll(lab);
-        return Result.success();
+        return Result.success(list);
     }
 
     /**

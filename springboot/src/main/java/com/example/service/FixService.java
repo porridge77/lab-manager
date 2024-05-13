@@ -29,7 +29,6 @@ public class FixService {
      * 新增
      */
     public void add(Fix fix) {
-        fix.setLabId(labMapper.getIdByNo(fix.getLabNo()));
         fix.setDate(DateUtil.date());
         fix.setStatus(FixEnum.NOT.status);
         fixMapper.insert(fix);

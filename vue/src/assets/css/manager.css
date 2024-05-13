@@ -145,10 +145,6 @@
     background-color: #222 !important;
 }
 
-.el-menu-item:not(.is-active):hover {
-    /*background-color: #0376bf !important;*/
-    /*color: #fff;*/
-}
 
 .el-menu-item:hover {
     background-color: #222 !important;

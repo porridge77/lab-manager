@@ -11,11 +11,15 @@
         <el-table-column prop="id" label="序号" width="80" align="center" sortable></el-table-column>
         <el-table-column prop="teacherName" label="报修人" show-overflow-tooltip></el-table-column>
         <el-table-column prop="description" label="故障描述" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="date" label="报修日期"></el-table-column>
-        <el-table-column prop="labNo" label="实验室编号"></el-table-column>
-        <el-table-column prop="labAdminName" label="实验室管理员"></el-table-column>
-        <el-table-column prop="status" label="报修状态"></el-table-column>
-        <el-table-column prop="statement" label="维修情况说明"></el-table-column>
+        <el-table-column prop="date" label="报修日期" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ formatDate(scope.row.date) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="labNo" label="实验室编号" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="labAdminName" label="实验室管理员" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="status" label="报修状态" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="statement" label="维修情况说明" show-overflow-tooltip></el-table-column>
 
         <el-table-column label="操作" width="180" align="center" >
           <template v-slot="scope">
@@ -44,14 +48,17 @@
 
     <el-dialog title="报修" :visible.sync="fromVisible" width="40%" :close-on-click-modal="false" destroy-on-close>
       <el-form label-width="100px" style="padding-right: 50px" :model="form" :rules="rules" ref="formRef">
-        <el-form-item prop="labNo" label="实验室编号" v-if="form.status === '未维修'||form.status === NULL">
-          <el-input v-model="form.labNo" autocomplete="off"></el-input>
+        <el-form-item prop="labId" label="实验室编号">
+          <el-select v-model="form.labId" placeholder="请选择实验室" style="width: 100%">
+            <el-option v-for="item in labData" :label="item.no" :value="item.id"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item prop="description" label="故障描述" v-if="form.status === '未维修'||form.status === NULL">
-          <el-input v-model="form.description" autocomplete="off"></el-input>
+          <el-input v-model="form.description" autocomplete="off" type="textarea"
+                    :rows="2"></el-input>
         </el-form-item>
         <el-form-item prop="date" label="日期" v-if="form.status === '未维修'||form.status === NULL">
-          <el-date-picker v-model="form.date" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"></el-date-picker>
+          <el-date-picker v-model="form.date" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" style="width:385px"></el-date-picker>
         </el-form-item>
         <el-form-item prop="statement" label="维修情况说明" v-if="form.status === '维修中'">
           <el-input type="textarea"
@@ -71,6 +78,9 @@
 </template>
 
 <script>
+
+import moment from "moment";
+
 export default {
   name: "Fix",
   data() {
@@ -84,15 +94,37 @@ export default {
       form: {},
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       rules: {
-
+        labId: [
+          {required: true, message: '请选择实验室', trigger: 'change'},
+        ],
+        description: [
+          {required: true, message: '请填写故障描述', trigger: 'blur'},
+        ],
+        date: [
+          {required: true, message: '请选择日期', trigger: 'change'},
+        ],
       },
-      ids: []
+      ids: [],
+      labData: [],
     }
   },
   created() {
     this.load(1)
+    this.loadLab()
   },
   methods: {
+    loadLab(){
+      this.$request.get('/lab/selectAll').then(res => {
+        if (res.code === '200') {
+          this.labData = res.data
+        } else {
+          this.$message.error(res.msg)
+        }
+      })
+    },
+    formatDate(dateStr) {
+      return moment(dateStr).format('YYYY-MM-DD'); // 使用 Moment.js 格式化日期
+    },
     handleAdd() {   // 新增数据
       this.form = {}  // 新增数据的时候清空数据
       this.fromVisible = true   // 打开弹窗
@@ -100,10 +132,6 @@ export default {
     handleEdit(row) {   // 编辑数据
       this.form = JSON.parse(JSON.stringify(row))  // 给form对象赋值  注意要深拷贝数据
       this.fromVisible = true   // 打开弹窗
-    },
-    changeStatusAndHandleEdit(row, status){
-      this.changeStatus(row, status);
-      this.handleEdit(row)
     },
     changeStatus(row, status) {
       let data = JSON.parse(JSON.stringify(row))
@@ -181,6 +209,7 @@ export default {
       })
     },
     load(pageNum) {  // 分页查询
+
       if (pageNum) this.pageNum = pageNum
       this.$request.get('/fix/selectPage', {
         params: {

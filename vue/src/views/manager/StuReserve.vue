@@ -51,21 +51,32 @@
 
     <el-dialog title="预约" :visible.sync="fromVisible" width="40%" :close-on-click-modal="false" destroy-on-close>
       <el-form label-width="100px" style="padding-right: 50px" :model="form" :rules="rules" ref="formRef">
-        <el-form-item prop="labNo" label="实验室编号">
-          <el-input v-model="form.labNo" autocomplete="off"></el-input>
+        <el-form-item prop="labId" label="实验室编号">
+          <el-select v-model="form.labId" placeholder="请选择实验室" style="width: 100%">
+            <el-option v-for="item in labData" :label="item.no" :value="item.id"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item prop="week" label="周次">
           <el-input v-model="form.week" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item prop="section" label="节次">
-          <el-input v-model="form.section" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item prop="reason" label="原因">
-          <el-input v-model="form.reason" autocomplete="off"></el-input>
+          <el-select v-model="form.section" placeholder="请选择节次" style="width:385px;">
+            <el-option
+                v-for="item in sectionOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item prop="date" label="日期">
-          <el-date-picker v-model="form.date" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"></el-date-picker>
+          <el-date-picker v-model="form.date" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" style="width:385px;"></el-date-picker>
         </el-form-item>
+        <el-form-item prop="reason" label="原因">
+          <el-input v-model="form.reason" autocomplete="off" type="textarea"
+                    :rows="2"></el-input>
+        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="fromVisible = false">取 消</el-button>
@@ -87,21 +98,52 @@ export default {
       pageSize: 10,  // 每页显示的个数
       total: 0,
       status: null,
+      section:'',
       fromVisible: false,
       form: {},
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       rules: {
-
+        labId: [
+          {required: true, message: '请选择实验室', trigger: 'change'},
+        ],
+        week: [
+          {required: true, message: '请输入周次', trigger: 'blur'},
+        ],
+        section: [
+          {required: true, message:'请选择节次', trigger:'change'},
+        ],
+        date: [
+          {required: true, message:'请选择日期', trigger:'change'},
+        ],
       },
-      ids: []
+      sectionOptions: [
+        { value: '1-2', label: '1-2' },
+        { value: '3-4', label: '3-4' },
+        { value: '5-6', label: '5-6' },
+        { value: '7-8', label: '7-8' },
+      ],
+      ids: [],
+      labData: [],
     }
   },
   created() {
-    this.getCurrentSemester()
-    this.load(1)
+    this.getCurrentSemester();
+    this.load(1);
+    this.loadLab();
   },
   methods: {
+    loadLab(){
+      this.$request.get('/lab/selectAll').then(res => {
+        if (res.code === '200') {
+          this.labData = res.data
+          console.log(res.data)
+        } else {
+          this.$message.error(res.msg)
+        }
+      })
+    },
     handleAdd() {   // 新增数据
+      this.loadLab()
       this.form = {}  // 新增数据的时候清空数据
       this.fromVisible = true   // 打开弹窗
     },
